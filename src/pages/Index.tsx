@@ -164,6 +164,7 @@ const Index = () => {
                 <ActiveComponent />
               </div>
             </div>
+          </motion.div>
         </AnimatePresence>
 
         {/* Section indicators */}
