@@ -1,15 +1,6 @@
 import { motion } from "framer-motion";
 import { Github, ExternalLink } from "lucide-react";
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
-};
+import { stagger, fadeUp } from "@/lib/animations";
 
 const projects = [
   {
@@ -53,32 +44,17 @@ const ProjectsSection = () => {
                 <h3 className="font-mono-display text-lg font-semibold text-foreground">{project.title}</h3>
                 <p className="label-caps text-[10px] mt-0.5">{project.subtitle}</p>
               </div>
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
+              <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Github className="h-4 w-4" strokeWidth={1.5} />
               </a>
             </div>
-
-            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 flex-1">
-              {project.description}
-            </p>
-
+            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 flex-1">{project.description}</p>
             <div className="mt-4 flex flex-wrap gap-1.5">
               {project.tech.map((t) => (
                 <span key={t} className="tech-pill text-[10px]">{t}</span>
               ))}
             </div>
-
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-1.5 text-accent text-xs hover:underline"
-            >
+            <a href={project.github} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-accent text-xs hover:underline">
               View on GitHub <ExternalLink className="h-3 w-3" />
             </a>
           </motion.div>

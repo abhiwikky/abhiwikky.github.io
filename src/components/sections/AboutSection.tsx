@@ -1,15 +1,6 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, Download, ExternalLink } from "lucide-react";
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
-};
+import { stagger, fadeUp } from "@/lib/animations";
 
 const links = [
   { icon: Github, label: "GitHub", href: "https://github.com/abhiwikky/" },
@@ -19,20 +10,10 @@ const links = [
 
 const AboutSection = () => {
   return (
-    <motion.div
-      variants={stagger}
-      initial="hidden"
-      animate="show"
-      className="max-w-3xl"
-    >
-      <motion.div variants={fadeUp} className="label-caps mb-4">
-        // ABOUT
-      </motion.div>
+    <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-3xl">
+      <motion.div variants={fadeUp} className="label-caps mb-4">// ABOUT</motion.div>
 
-      <motion.h1
-        variants={fadeUp}
-        className="font-mono-display text-4xl md:text-5xl font-bold text-foreground leading-tight"
-      >
+      <motion.h1 variants={fadeUp} className="font-mono-display text-4xl md:text-5xl font-bold text-foreground leading-tight">
         ABHIJITH S
       </motion.h1>
 
@@ -42,13 +23,10 @@ const AboutSection = () => {
         ))}
       </motion.div>
 
-      <motion.p
-        variants={fadeUp}
-        className="mt-8 text-muted-foreground leading-relaxed text-[15px] max-w-2xl"
-      >
-        Cybersecurity student focused on building practical security tools and defensive technologies. 
-        Work centers on malware analysis, ransomware detection, automation tools, and endpoint security concepts. 
-        Particularly interested in threat detection engineering, behavioral malware detection, 
+      <motion.p variants={fadeUp} className="mt-8 text-muted-foreground leading-relaxed text-[15px] max-w-2xl">
+        Cybersecurity student focused on building practical security tools and defensive technologies.
+        Work centers on malware analysis, ransomware detection, automation tools, and endpoint security concepts.
+        Particularly interested in threat detection engineering, behavioral malware detection,
         and building security-focused software systems.
       </motion.p>
 
@@ -78,11 +56,10 @@ const AboutSection = () => {
         </a>
       </motion.div>
 
-      {/* Status indicator */}
       <motion.div variants={fadeUp} className="mt-12 flex items-center gap-3">
         <span className="relative flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+          <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" style={{ backgroundColor: "hsl(142, 71%, 45%)" }} />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: "hsl(142, 71%, 45%)" }} />
         </span>
         <span className="label-caps text-[10px]">Available for opportunities</span>
       </motion.div>

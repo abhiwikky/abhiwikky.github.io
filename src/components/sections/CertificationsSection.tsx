@@ -1,15 +1,6 @@
 import { motion } from "framer-motion";
 import { Award, ExternalLink } from "lucide-react";
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
-};
+import { stagger, fadeUp } from "@/lib/animations";
 
 const certs = [
   "CompTIA Security+",
@@ -32,11 +23,7 @@ const CertificationsSection = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {certs.map((cert) => (
-          <motion.div
-            key={cert}
-            variants={fadeUp}
-            className="surface-card surface-card-hover border border-border rounded-xl p-5 flex flex-col items-center text-center"
-          >
+          <motion.div key={cert} variants={fadeUp} className="surface-card surface-card-hover border border-border rounded-xl p-5 flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-4">
               <Award className="h-6 w-6 text-primary" strokeWidth={1.5} />
             </div>
@@ -48,7 +35,6 @@ const CertificationsSection = () => {
         ))}
       </div>
 
-      {/* Training */}
       <motion.div variants={fadeUp} className="mt-12">
         <div className="label-caps mb-4">// TRAINING</div>
         <div className="surface-card border border-border rounded-xl p-6">

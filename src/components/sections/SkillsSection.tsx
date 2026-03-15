@@ -1,15 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
-};
+import { stagger, fadeUp } from "@/lib/animations";
 
 const skillCategories: Record<string, string[]> = {
   Languages: ["Python", "Bash", "C++", "Rust"],
@@ -23,15 +14,12 @@ const skillCategories: Record<string, string[]> = {
 const categories = Object.keys(skillCategories);
 
 const SkillsSection = () => {
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0]);
-
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
   const activeSkills = useMemo(() => skillCategories[activeCategory] || [], [activeCategory]);
+  const activeCatIdx = categories.indexOf(activeCategory);
 
-  // Calculate positions for SVG connections
   const catY = (idx: number) => 40 + idx * 64;
   const skillY = (idx: number) => 40 + idx * 44;
-
-  const activeCatIdx = categories.indexOf(activeCategory);
 
   return (
     <motion.div variants={stagger} initial="hidden" animate="show">
@@ -39,31 +27,23 @@ const SkillsSection = () => {
       <motion.h2 variants={fadeUp} className="section-header mb-8">SKILLS_</motion.h2>
 
       <motion.div variants={fadeUp} className="relative flex gap-8 min-h-[500px]">
-        {/* Left: Categories */}
         <div className="w-48 shrink-0 space-y-2">
-          {categories.map((cat, idx) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
-                activeCategory === cat
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                activeCategory === cat ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               }`}
             >
               <div className="flex items-center gap-2">
-                <span
-                  className={`w-2 h-2 rounded-full shrink-0 transition-colors ${
-                    activeCategory === cat ? "bg-primary" : "bg-muted"
-                  }`}
-                />
+                <span className={`w-2 h-2 rounded-full shrink-0 transition-colors ${activeCategory === cat ? "bg-primary" : "bg-muted"}`} />
                 <span className="font-mono-data uppercase tracking-wider text-[11px]">{cat}</span>
               </div>
             </button>
           ))}
         </div>
 
-        {/* Center: SVG Lines */}
         <div className="w-24 relative hidden md:block">
           <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
             <AnimatePresence>
@@ -78,14 +58,13 @@ const SkillsSection = () => {
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ pathLength: 1, opacity: 1 }}
                   exit={{ pathLength: 0, opacity: 0 }}
-                  transition={{ duration: 0.4, delay: idx * 0.03, ease: [0.2, 0.8, 0.2, 1] }}
+                  transition={{ duration: 0.4, delay: idx * 0.03 }}
                 />
               ))}
             </AnimatePresence>
           </svg>
         </div>
 
-        {/* Right: Skills */}
         <div className="flex-1">
           <AnimatePresence mode="wait">
             <motion.div
@@ -93,14 +72,11 @@ const SkillsSection = () => {
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
+              transition={{ duration: 0.3 }}
               className="space-y-2"
             >
               {activeSkills.map((skill) => (
-                <div
-                  key={skill}
-                  className="surface-card border border-border rounded-lg px-4 py-3 flex items-center gap-3"
-                >
+                <div key={skill} className="surface-card border border-border rounded-lg px-4 py-3 flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
                   <span className="text-sm text-foreground">{skill}</span>
                 </div>
