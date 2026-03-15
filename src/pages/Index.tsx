@@ -4,7 +4,6 @@ import { Menu } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
 import CursorTrail from "@/components/CursorTrail";
 import GridBackground from "@/components/GridBackground";
-import Wireframe3DObject from "@/components/Wireframe3DObject";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -156,13 +155,10 @@ const Index = () => {
             animate="center"
             exit="exit"
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="absolute inset-0 overflow-y-auto"
+            className="absolute inset-0 flex items-start pt-20 md:pt-16 px-6 md:px-12 pb-16 overflow-y-auto"
           >
-            <Wireframe3DObject sectionId={activeSection} direction={direction} />
-            <div className="relative z-10 pt-20 md:pt-16 px-6 md:px-12 pb-16">
-              <div className="max-w-[1200px] mx-auto w-full">
-                <ActiveComponent />
-              </div>
+            <div className="max-w-[1200px] mx-auto w-full">
+              <ActiveComponent />
             </div>
           </motion.div>
         </AnimatePresence>
