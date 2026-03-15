@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Menu } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
 import AppSidebar from "@/components/AppSidebar";
 import CursorTrail from "@/components/CursorTrail";
 import GridBackground from "@/components/GridBackground";
@@ -23,65 +22,87 @@ const sectionList = [
   { id: "contact", Component: ContactSection },
 ];
 
-const ScrollSection = ({
-  id,
-  children,
-  onInView,
-}: {
-  id: string;
-  children: React.ReactNode;
-  onInView: (id: string) => void;
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { margin: "-40% 0px -40% 0px", amount: 0.1 });
-
-  useEffect(() => {
-    if (isInView) onInView(id);
-  }, [isInView, id, onInView]);
-
-  return (
-    <motion.section
-      ref={ref}
-      id={id}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, margin: "-10% 0px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="min-h-[60vh] py-16 md:py-24"
-    >
-      {children}
-    </motion.section>
-  );
+const variants = {
+  enter: (direction: number) => ({
+    y: direction > 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    y: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    y: direction > 0 ? "-100%" : "100%",
+    opacity: 0,
+  }),
 };
 
 const Index = () => {
-  const [activeSection, setActiveSection] = useState("about");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isScrollingRef = useRef(false);
+  const isTransitioning = useRef(false);
+  const touchStartY = useRef(0);
 
-  const handleInView = useCallback((id: string) => {
-    if (!isScrollingRef.current) {
-      setActiveSection(id);
-    }
-  }, []);
+  const activeSection = sectionList[currentIndex].id;
+  const ActiveComponent = sectionList[currentIndex].Component;
 
-  const handleNavigate = (section: string) => {
-    setActiveSection(section);
+  const goTo = useCallback((index: number) => {
+    if (index === currentIndex || isTransitioning.current || index < 0 || index >= sectionList.length) return;
+    setDirection(index > currentIndex ? 1 : -1);
+    setCurrentIndex(index);
+    isTransitioning.current = true;
+    setTimeout(() => { isTransitioning.current = false; }, 600);
+  }, [currentIndex]);
+
+  const handleNavigate = useCallback((section: string) => {
+    const idx = sectionList.findIndex(s => s.id === section);
+    if (idx !== -1) goTo(idx);
     setMobileMenuOpen(false);
-    isScrollingRef.current = true;
+  }, [goTo]);
 
-    const el = document.getElementById(section);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      // Allow intersection observer to take over after scroll finishes
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 800);
-    }
-  };
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isTransitioning.current) return;
+      if (Math.abs(e.deltaY) < 30) return;
+      goTo(currentIndex + (e.deltaY > 0 ? 1 : -1));
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || e.key === "PageDown") {
+        e.preventDefault();
+        goTo(currentIndex + 1);
+      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+        e.preventDefault();
+        goTo(currentIndex - 1);
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const delta = touchStartY.current - e.changedTouches[0].clientY;
+      if (Math.abs(delta) < 50) return;
+      goTo(currentIndex + (delta > 0 ? 1 : -1));
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [currentIndex, goTo]);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       <GridBackground />
       <CursorTrail />
 
@@ -92,10 +113,7 @@ const Index = () => {
 
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-card border-b border-border flex items-center px-4 z-40">
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-foreground p-2"
-        >
+        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-foreground p-2">
           <Menu className="h-5 w-5" strokeWidth={1.5} />
         </button>
         <span className="font-mono-display text-sm font-semibold text-foreground ml-3">ABHIJITH_S</span>
@@ -126,13 +144,36 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      {/* Content — all sections stacked vertically */}
-      <main className="flex-1 md:ml-60 pt-16 md:pt-8 px-6 md:px-12 pb-16 relative z-10">
-        <div className="max-w-[1200px] mx-auto">
-          {sectionList.map(({ id, Component }) => (
-            <ScrollSection key={id} id={id} onInView={handleInView}>
-              <Component />
-            </ScrollSection>
+      {/* Full-page section transitions */}
+      <main className="flex-1 md:ml-60 h-screen relative z-10 overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={activeSection}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="absolute inset-0 flex items-start pt-20 md:pt-16 px-6 md:px-12 pb-16 overflow-y-auto"
+          >
+            <div className="max-w-[1200px] mx-auto w-full">
+              <ActiveComponent />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Section indicators */}
+        <div className="fixed right-4 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-2">
+          {sectionList.map((s, i) => (
+            <button
+              key={s.id}
+              onClick={() => goTo(i)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                i === currentIndex ? "bg-primary scale-125" : "bg-muted hover:bg-muted-foreground"
+              }`}
+              aria-label={s.id}
+            />
           ))}
         </div>
       </main>
