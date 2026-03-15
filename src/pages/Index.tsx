@@ -5,6 +5,7 @@ import AppSidebar from "@/components/AppSidebar";
 import CursorTrail from "@/components/CursorTrail";
 import GridBackground from "@/components/GridBackground";
 import SectionBackground from "@/components/SectionBackground";
+import Wireframe3DObject from "@/components/Wireframe3DObject";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -159,6 +160,7 @@ const Index = () => {
             className="absolute inset-0 overflow-y-auto"
           >
             <SectionBackground sectionId={activeSection} direction={direction} />
+            <Wireframe3DObject sectionId={activeSection} direction={direction} />
             <div className="relative z-10 pt-20 md:pt-16 px-6 md:px-12 pb-16">
               <div className="max-w-[1200px] mx-auto w-full">
                 <ActiveComponent />
