@@ -5,176 +5,277 @@ interface SectionBackgroundProps {
   direction: number;
 }
 
-// Each section gets unique geometric shapes that parallax with the transition
+// Wireframe geometric node with label
+const WireNode = ({
+  x,
+  y,
+  delay = 0,
+  label,
+}: {
+  x: string;
+  y: string;
+  delay?: number;
+  label?: string;
+}) => (
+  <motion.div
+    className="absolute"
+    style={{ left: x, top: y }}
+    initial={{ opacity: 0, scale: 0 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.5, delay }}
+  >
+    <div className="relative">
+      <div className="w-3 h-3 rounded-full border border-primary/40 bg-primary/10" />
+      <div className="absolute inset-0 w-3 h-3 rounded-full bg-primary/20 animate-ping" style={{ animationDuration: "3s" }} />
+      {label && (
+        <span className="absolute left-5 top-0 font-mono-data text-[9px] text-primary/30 whitespace-nowrap">
+          {label}
+        </span>
+      )}
+    </div>
+  </motion.div>
+);
+
+// Animated wireframe line
+const WireLine = ({
+  x1,
+  y1,
+  x2,
+  y2,
+  delay = 0,
+}: {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  delay?: number;
+}) => (
+  <motion.line
+    x1={`${x1}%`}
+    y1={`${y1}%`}
+    x2={`${x2}%`}
+    y2={`${y2}%`}
+    stroke="hsl(210, 100%, 50%)"
+    strokeWidth="0.5"
+    strokeOpacity="0.15"
+    initial={{ pathLength: 0 }}
+    animate={{ pathLength: 1 }}
+    transition={{ duration: 0.8, delay, ease: "easeOut" }}
+  />
+);
+
+// Geometric shape outlines
+const WireShape = ({
+  type,
+  x,
+  y,
+  size,
+  rotation = 0,
+  delay = 0,
+  color = "primary",
+}: {
+  type: "circle" | "square" | "diamond" | "hexagon";
+  x: string;
+  y: string;
+  size: number;
+  rotation?: number;
+  delay?: number;
+  color?: "primary" | "accent";
+}) => {
+  const colorClass = color === "primary" ? "border-primary/20" : "border-accent/25";
+  const glowColor = color === "primary" ? "shadow-primary/5" : "shadow-accent/5";
+
+  const shapeStyles: Record<string, string> = {
+    circle: `rounded-full ${colorClass}`,
+    square: `${colorClass}`,
+    diamond: `${colorClass} rotate-45`,
+    hexagon: `rounded-xl ${colorClass}`,
+  };
+
+  return (
+    <motion.div
+      className="absolute"
+      style={{ left: x, top: y }}
+      initial={{ opacity: 0, scale: 0.3, rotate: rotation - 20 }}
+      animate={{ opacity: 1, scale: 1, rotate: rotation }}
+      transition={{ duration: 1, delay, ease: "easeOut" }}
+    >
+      <div
+        className={`border ${shapeStyles[type]} shadow-lg ${glowColor}`}
+        style={{ width: size, height: size }}
+      />
+    </motion.div>
+  );
+};
+
+// Floating grid pattern
+const FloatingGrid = ({ x, y, delay = 0 }: { x: string; y: string; delay?: number }) => (
+  <motion.div
+    className="absolute"
+    style={{ left: x, top: y }}
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 0.12, y: 0 }}
+    transition={{ duration: 1.2, delay }}
+  >
+    <div className="grid grid-cols-4 gap-3">
+      {Array.from({ length: 16 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="w-2 h-2 border border-primary/25 rounded-[2px]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0.5] }}
+          transition={{ duration: 2, delay: delay + i * 0.05, repeat: Infinity, repeatType: "reverse" }}
+        />
+      ))}
+    </div>
+  </motion.div>
+);
+
+// Scanning line effect
+const ScanLine = ({ direction: dir, delay = 0 }: { direction: "horizontal" | "vertical"; delay?: number }) => (
+  <motion.div
+    className={`absolute ${dir === "horizontal" ? "left-0 right-0 h-px" : "top-0 bottom-0 w-px"}`}
+    style={dir === "horizontal" ? { top: "50%" } : { left: "50%" }}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: [0, 0.15, 0] }}
+    transition={{ duration: 3, delay, repeat: Infinity, ease: "easeInOut" }}
+  >
+    <div
+      className={`${
+        dir === "horizontal"
+          ? "w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+          : "h-full w-px bg-gradient-to-b from-transparent via-primary/40 to-transparent"
+      }`}
+    />
+  </motion.div>
+);
+
 const sectionElements: Record<string, React.ReactNode> = {
   about: (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 80 }}
-        animate={{ opacity: 0.06, y: 0 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-        className="absolute top-[10%] right-[8%] w-72 h-72 border border-primary/20 rounded-full"
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 0.04, scale: 1 }}
-        transition={{ duration: 1.4, delay: 0.2 }}
-        className="absolute bottom-[15%] left-[5%] w-96 h-96 border border-accent/15 rotate-45"
-      />
-      <motion.div
-        initial={{ opacity: 0, x: -40 }}
-        animate={{ opacity: 0.05, x: 0 }}
-        transition={{ duration: 1, delay: 0.3 }}
-        className="absolute top-[30%] right-[25%] w-1 h-32 bg-gradient-to-b from-primary/30 to-transparent"
-      />
+      <WireShape type="circle" x="75%" y="8%" size={280} delay={0.1} />
+      <WireShape type="diamond" x="5%" y="60%" size={160} rotation={0} delay={0.3} color="accent" />
+      <WireShape type="square" x="82%" y="55%" size={100} rotation={15} delay={0.4} />
+      <FloatingGrid x="70%" y="70%" delay={0.2} />
+      <WireNode x="80%" y="15%" delay={0.2} label="0x01" />
+      <WireNode x="90%" y="30%" delay={0.35} label="0xA3" />
+      <WireNode x="72%" y="40%" delay={0.5} label="0xF7" />
+      <WireNode x="85%" y="50%" delay={0.4} />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={80} y1={17} x2={90} y2={32} delay={0.3} />
+        <WireLine x1={90} y1={32} x2={72} y2={42} delay={0.5} />
+        <WireLine x1={72} y1={42} x2={85} y2={52} delay={0.6} />
+        <WireLine x1={85} y1={52} x2={80} y2={17} delay={0.7} />
+      </svg>
+      <ScanLine direction="horizontal" delay={1} />
     </>
   ),
   projects: (
     <>
-      <motion.div
-        initial={{ opacity: 0, rotate: 0 }}
-        animate={{ opacity: 0.05, rotate: 15 }}
-        transition={{ duration: 1.2 }}
-        className="absolute top-[5%] left-[10%] w-64 h-64 border border-primary/20"
-      />
-      <motion.div
-        initial={{ opacity: 0, y: 60 }}
-        animate={{ opacity: 0.04, y: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-[10%] right-[12%] w-48 h-48 border border-accent/15 rounded-full"
-      />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.06 }}
-        transition={{ duration: 1.4, delay: 0.1 }}
-        className="absolute top-[50%] left-[50%] w-px h-64 bg-gradient-to-b from-transparent via-primary/40 to-transparent -translate-x-1/2"
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 0.03, scale: 1 }}
-        transition={{ duration: 1.2, delay: 0.3 }}
-        className="absolute top-[20%] right-[30%] w-32 h-32 rotate-12 border border-muted/30"
-      />
+      <WireShape type="square" x="8%" y="5%" size={200} rotation={12} delay={0.1} />
+      <WireShape type="circle" x="78%" y="60%" size={180} delay={0.25} color="accent" />
+      <WireShape type="hexagon" x="70%" y="8%" size={120} rotation={-8} delay={0.35} />
+      <FloatingGrid x="80%" y="15%" delay={0.15} />
+      <WireNode x="15%" y="20%" delay={0.2} label="proj" />
+      <WireNode x="25%" y="10%" delay={0.3} label="git" />
+      <WireNode x="5%" y="35%" delay={0.4} />
+      <WireNode x="88%" y="45%" delay={0.35} label="src" />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={15} y1={22} x2={25} y2={12} delay={0.3} />
+        <WireLine x1={15} y1={22} x2={5} y2={37} delay={0.45} />
+        <WireLine x1={70} y1={15} x2={88} y2={47} delay={0.5} />
+      </svg>
+      <ScanLine direction="vertical" delay={0.8} />
     </>
   ),
   skills: (
     <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 0.05, scale: 1 }}
-        transition={{ duration: 1.3 }}
-        className="absolute top-[8%] right-[5%] w-80 h-80 rounded-full border border-primary/15"
-      />
-      <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 0.04, x: 0 }}
-        transition={{ duration: 1, delay: 0.15 }}
-        className="absolute bottom-[20%] left-[8%] w-40 h-40 border border-accent/20 rotate-[30deg]"
-      />
-      {/* Node-like dots */}
+      <WireShape type="circle" x="80%" y="5%" size={240} delay={0.1} />
+      <WireShape type="diamond" x="75%" y="65%" size={140} delay={0.3} color="accent" />
+      <FloatingGrid x="85%" y="40%" delay={0.2} />
       {[
-        { top: "15%", left: "60%", delay: 0.2 },
-        { top: "35%", left: "80%", delay: 0.35 },
-        { top: "60%", left: "70%", delay: 0.5 },
-        { top: "75%", left: "85%", delay: 0.4 },
-      ].map((dot, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 0.12, scale: 1 }}
-          transition={{ duration: 0.6, delay: dot.delay }}
-          className="absolute w-2 h-2 rounded-full bg-primary/40"
-          style={{ top: dot.top, left: dot.left }}
-        />
+        { x: "78%", y: "12%", label: "sys", d: 0.15 },
+        { x: "92%", y: "20%", label: "net", d: 0.25 },
+        { x: "85%", y: "35%", label: "sec", d: 0.35 },
+        { x: "75%", y: "50%", label: "dev", d: 0.45 },
+        { x: "90%", y: "55%", label: "ops", d: 0.5 },
+        { x: "82%", y: "70%", d: 0.55 },
+      ].map((n, i) => (
+        <WireNode key={i} x={n.x} y={n.y} delay={n.d} label={n.label} />
       ))}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={78} y1={14} x2={92} y2={22} delay={0.3} />
+        <WireLine x1={92} y1={22} x2={85} y2={37} delay={0.4} />
+        <WireLine x1={85} y1={37} x2={75} y2={52} delay={0.5} />
+        <WireLine x1={75} y1={52} x2={90} y2={57} delay={0.55} />
+        <WireLine x1={90} y1={57} x2={82} y2={72} delay={0.6} />
+        <WireLine x1={82} y1={72} x2={78} y2={14} delay={0.7} />
+      </svg>
+      <ScanLine direction="horizontal" delay={1.2} />
     </>
   ),
   certifications: (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 0.04, y: 0 }}
-        transition={{ duration: 1.2 }}
-        className="absolute top-[10%] left-[15%] w-56 h-56 rounded-2xl border border-primary/15 rotate-[20deg]"
-      />
-      <motion.div
-        initial={{ opacity: 0, rotate: -20 }}
-        animate={{ opacity: 0.05, rotate: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-[8%] right-[10%] w-72 h-72 border border-accent/10 rounded-full"
-      />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.06 }}
-        transition={{ duration: 1.4, delay: 0.3 }}
-        className="absolute top-[40%] right-[20%] w-px h-48 bg-gradient-to-b from-transparent via-accent/30 to-transparent"
-      />
+      <WireShape type="hexagon" x="10%" y="8%" size={180} rotation={10} delay={0.1} />
+      <WireShape type="circle" x="80%" y="55%" size={220} delay={0.2} color="accent" />
+      <WireShape type="square" x="75%" y="10%" size={90} rotation={20} delay={0.35} />
+      <FloatingGrid x="5%" y="70%" delay={0.25} />
+      <WireNode x="20%" y="15%" delay={0.2} label="cert" />
+      <WireNode x="85%" y="25%" delay={0.3} label="key" />
+      <WireNode x="90%" y="70%" delay={0.4} />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={20} y1={17} x2={75} y2={15} delay={0.4} />
+        <WireLine x1={85} y1={27} x2={90} y2={72} delay={0.5} />
+      </svg>
+      <ScanLine direction="vertical" delay={0.6} />
     </>
   ),
   achievements: (
     <>
-      <motion.div
-        initial={{ opacity: 0, x: -60 }}
-        animate={{ opacity: 0.05, x: 0 }}
-        transition={{ duration: 1.2 }}
-        className="absolute top-[12%] right-[8%] w-64 h-1 bg-gradient-to-r from-primary/30 to-transparent"
-      />
-      <motion.div
-        initial={{ opacity: 0, x: 60 }}
-        animate={{ opacity: 0.05, x: 0 }}
-        transition={{ duration: 1.2, delay: 0.15 }}
-        className="absolute top-[45%] right-[5%] w-48 h-1 bg-gradient-to-l from-accent/20 to-transparent"
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 0.04, scale: 1 }}
-        transition={{ duration: 1, delay: 0.3 }}
-        className="absolute bottom-[15%] left-[10%] w-52 h-52 border border-primary/15 rotate-45"
-      />
+      <WireShape type="diamond" x="80%" y="10%" size={200} delay={0.1} />
+      <WireShape type="circle" x="8%" y="55%" size={160} delay={0.25} color="accent" />
+      <FloatingGrid x="75%" y="60%" delay={0.2} />
+      <WireNode x="85%" y="18%" delay={0.2} label="ach" />
+      <WireNode x="92%" y="35%" delay={0.3} label="flag" />
+      <WireNode x="78%" y="45%" delay={0.4} />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={85} y1={20} x2={92} y2={37} delay={0.35} />
+        <WireLine x1={92} y1={37} x2={78} y2={47} delay={0.5} />
+        <WireLine x1={78} y1={47} x2={85} y2={20} delay={0.6} />
+      </svg>
+      <ScanLine direction="horizontal" delay={0.8} />
     </>
   ),
   education: (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 0.05, y: 0 }}
-        transition={{ duration: 1.2 }}
-        className="absolute top-[8%] left-[8%] w-60 h-60 rounded-full border border-primary/15"
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 0.04, scale: 1 }}
-        transition={{ duration: 1.2, delay: 0.2 }}
-        className="absolute bottom-[10%] right-[15%] w-44 h-44 border border-accent/15 rounded-lg rotate-[15deg]"
-      />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.06 }}
-        transition={{ duration: 1.4, delay: 0.25 }}
-        className="absolute top-[55%] left-[50%] w-40 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
-      />
+      <WireShape type="circle" x="5%" y="10%" size={200} delay={0.1} />
+      <WireShape type="square" x="78%" y="55%" size={150} rotation={-10} delay={0.25} color="accent" />
+      <FloatingGrid x="82%" y="12%" delay={0.2} />
+      <WireNode x="12%" y="20%" delay={0.2} label="edu" />
+      <WireNode x="8%" y="40%" delay={0.35} label="grad" />
+      <WireNode x="85%" y="65%" delay={0.4} />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={12} y1={22} x2={8} y2={42} delay={0.4} />
+        <WireLine x1={78} y1={60} x2={85} y2={67} delay={0.5} />
+      </svg>
+      <ScanLine direction="vertical" delay={1} />
     </>
   ),
   contact: (
     <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.4 }}
-        animate={{ opacity: 0.06, scale: 1 }}
-        transition={{ duration: 1.4 }}
-        className="absolute top-[10%] right-[10%] w-80 h-80 rounded-full border border-primary/20"
-      />
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 0.04, y: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        className="absolute bottom-[20%] left-[12%] w-48 h-48 border border-accent/15 rotate-[25deg]"
-      />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.08 }}
-        transition={{ duration: 1.2, delay: 0.3 }}
-        className="absolute top-[30%] left-[30%] w-1 h-40 bg-gradient-to-b from-primary/20 to-transparent"
-      />
+      <WireShape type="circle" x="78%" y="8%" size={260} delay={0.1} />
+      <WireShape type="diamond" x="8%" y="60%" size={140} delay={0.25} color="accent" />
+      <WireShape type="hexagon" x="85%" y="65%" size={100} rotation={15} delay={0.4} />
+      <FloatingGrid x="5%" y="15%" delay={0.15} />
+      <WireNode x="82%" y="15%" delay={0.2} label="tx" />
+      <WireNode x="90%" y="30%" delay={0.3} label="rx" />
+      <WireNode x="75%" y="42%" delay={0.4} label="sig" />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <WireLine x1={82} y1={17} x2={90} y2={32} delay={0.35} />
+        <WireLine x1={90} y1={32} x2={75} y2={44} delay={0.5} />
+        <WireLine x1={75} y1={44} x2={82} y2={17} delay={0.6} />
+      </svg>
+      <ScanLine direction="horizontal" delay={0.9} />
     </>
   ),
 };
@@ -183,9 +284,9 @@ const SectionBackground = ({ sectionId, direction }: SectionBackgroundProps) => 
   return (
     <motion.div
       className="absolute inset-0 pointer-events-none overflow-hidden"
-      initial={{ opacity: 0, y: direction > 0 ? 60 : -60 }}
+      initial={{ opacity: 0, y: direction > 0 ? 80 : -80 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.9, ease: "easeOut" }}
     >
       {sectionElements[sectionId] || null}
     </motion.div>
