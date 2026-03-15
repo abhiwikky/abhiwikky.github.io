@@ -4,7 +4,6 @@ import { Menu } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
 import CursorTrail from "@/components/CursorTrail";
 import GridBackground from "@/components/GridBackground";
-import SectionBackground from "@/components/SectionBackground";
 import Wireframe3DObject from "@/components/Wireframe3DObject";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
