@@ -280,14 +280,43 @@ const meshComponents: Record<SectionMesh, React.FC> = {
   satellite: SatelliteMesh,
 };
 
-const sectionMeshMap: Record<string, SectionMesh> = {
-  about: "head",
-  projects: "car",
-  skills: "planet",
-  certifications: "shield",
-  achievements: "rocket",
-  education: "book",
-  contact: "satellite",
+// Per-section positioning: place 3D objects in empty spaces
+const sectionConfig: Record<string, { mesh: SectionMesh; className: string }> = {
+  // About: content is left-aligned (max-w-3xl), large empty space on right
+  about: {
+    mesh: "head",
+    className: "absolute right-[2%] top-[8%] w-[40vw] h-[75vh] max-w-[600px]",
+  },
+  // Projects: 3-col grid fills width, place below-right area
+  projects: {
+    mesh: "car",
+    className: "absolute right-[0%] bottom-[0%] w-[35vw] h-[55vh] max-w-[500px]",
+  },
+  // Skills: categories left + skills center, far-right is open
+  skills: {
+    mesh: "planet",
+    className: "absolute right-[0%] top-[5%] w-[30vw] h-[70vh] max-w-[450px]",
+  },
+  // Certifications: 3-col grid, space below on right
+  certifications: {
+    mesh: "shield",
+    className: "absolute right-[0%] bottom-[2%] w-[32vw] h-[55vh] max-w-[480px]",
+  },
+  // Achievements: timeline is left-aligned with pl-12, right side is wide open
+  achievements: {
+    mesh: "rocket",
+    className: "absolute right-[2%] top-[10%] w-[38vw] h-[70vh] max-w-[550px]",
+  },
+  // Education: cards stacked left-center, right side open
+  education: {
+    mesh: "book",
+    className: "absolute right-[2%] top-[10%] w-[35vw] h-[65vh] max-w-[500px]",
+  },
+  // Contact: tabs left + content center, right side open
+  contact: {
+    mesh: "satellite",
+    className: "absolute right-[2%] top-[5%] w-[35vw] h-[70vh] max-w-[520px]",
+  },
 };
 
 interface Wireframe3DObjectProps {
@@ -296,16 +325,16 @@ interface Wireframe3DObjectProps {
 }
 
 const Wireframe3DObject = ({ sectionId, direction }: Wireframe3DObjectProps) => {
-  const meshType = sectionMeshMap[sectionId];
-  if (!meshType) return null;
-  const MeshComponent = meshComponents[meshType];
+  const config = sectionConfig[sectionId];
+  if (!config) return null;
+  const MeshComponent = meshComponents[config.mesh];
 
   return (
     <motion.div
-      className="absolute right-[5%] top-[10%] w-[45vw] h-[80vh] max-w-[700px] pointer-events-none z-0 opacity-30"
-      initial={{ opacity: 0, y: direction > 0 ? 200 : -200, scale: 0.7 }}
-      animate={{ opacity: 0.30, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: direction > 0 ? -200 : 200, scale: 0.7 }}
+      className={`${config.className} pointer-events-none z-0`}
+      initial={{ opacity: 0, y: direction > 0 ? 200 : -200, scale: 0.6 }}
+      animate={{ opacity: 0.25, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: direction > 0 ? -200 : 200, scale: 0.6 }}
       transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
     >
       <Canvas
