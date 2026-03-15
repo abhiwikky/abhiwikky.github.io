@@ -6,6 +6,7 @@ const certs = [
   "CompTIA Security+",
   "CompTIA Network+",
   "CompTIA CySA+",
+  "CompTIA PenTest+",
   "Quick Heal Certified Digital Forensic Investigator",
   "QuickHeal Certified Malware Analyst",
 ];
