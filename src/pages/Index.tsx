@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, useInView } from "framer-motion";
 import { Menu } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import AppSidebar from "@/components/AppSidebar";
 import CursorTrail from "@/components/CursorTrail";
 import GridBackground from "@/components/GridBackground";
@@ -12,25 +13,71 @@ import AchievementsSection from "@/components/sections/AchievementsSection";
 import EducationSection from "@/components/sections/EducationSection";
 import ContactSection from "@/components/sections/ContactSection";
 
-const sections: Record<string, React.ComponentType> = {
-  about: AboutSection,
-  projects: ProjectsSection,
-  skills: SkillsSection,
-  certifications: CertificationsSection,
-  achievements: AchievementsSection,
-  education: EducationSection,
-  contact: ContactSection,
+const sectionList = [
+  { id: "about", Component: AboutSection },
+  { id: "projects", Component: ProjectsSection },
+  { id: "skills", Component: SkillsSection },
+  { id: "certifications", Component: CertificationsSection },
+  { id: "achievements", Component: AchievementsSection },
+  { id: "education", Component: EducationSection },
+  { id: "contact", Component: ContactSection },
+];
+
+const ScrollSection = ({
+  id,
+  children,
+  onInView,
+}: {
+  id: string;
+  children: React.ReactNode;
+  onInView: (id: string) => void;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { margin: "-40% 0px -40% 0px", amount: 0.1 });
+
+  useEffect(() => {
+    if (isInView) onInView(id);
+  }, [isInView, id, onInView]);
+
+  return (
+    <motion.section
+      ref={ref}
+      id={id}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-10% 0px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="min-h-[60vh] py-16 md:py-24"
+    >
+      {children}
+    </motion.section>
+  );
 };
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("about");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isScrollingRef = useRef(false);
 
-  const ActiveComponent = sections[activeSection];
+  const handleInView = useCallback((id: string) => {
+    if (!isScrollingRef.current) {
+      setActiveSection(id);
+    }
+  }, []);
 
   const handleNavigate = (section: string) => {
     setActiveSection(section);
     setMobileMenuOpen(false);
+    isScrollingRef.current = true;
+
+    const el = document.getElementById(section);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      // Allow intersection observer to take over after scroll finishes
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 800);
+    }
   };
 
   return (
@@ -79,20 +126,14 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      {/* Content */}
-      <main className="flex-1 md:ml-60 pt-20 md:pt-16 px-6 md:px-12 pb-16 relative z-10">
+      {/* Content — all sections stacked vertically */}
+      <main className="flex-1 md:ml-60 pt-16 md:pt-8 px-6 md:px-12 pb-16 relative z-10">
         <div className="max-w-[1200px] mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSection}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ActiveComponent />
-            </motion.div>
-          </AnimatePresence>
+          {sectionList.map(({ id, Component }) => (
+            <ScrollSection key={id} id={id} onInView={handleInView}>
+              <Component />
+            </ScrollSection>
+          ))}
         </div>
       </main>
     </div>
