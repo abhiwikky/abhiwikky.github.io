@@ -51,7 +51,7 @@ const CursorTrail = () => {
         // Draw node
         ctx.beginPath();
         ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(210, 100%, 50%, ${alpha})`;
+        ctx.fillStyle = `hsla(172, 78%, 45%, ${alpha})`;
         ctx.fill();
 
         // Draw connections to nearby nodes
@@ -66,7 +66,7 @@ const CursorTrail = () => {
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(other.x, other.y);
-            ctx.strokeStyle = `hsla(210, 100%, 50%, ${lineAlpha})`;
+            ctx.strokeStyle = `hsla(172, 78%, 45%, ${lineAlpha})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }

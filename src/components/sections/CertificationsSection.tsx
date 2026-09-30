@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
-import { Award, ExternalLink } from "lucide-react";
+import { Award } from "lucide-react";
 import { stagger, fadeUp } from "@/lib/animations";
 
 const certs = [
-  "CompTIA Security+",
-  "CompTIA Network+",
-  "CompTIA CySA+",
-  "CompTIA PenTest+",
-  "Quick Heal Certified Digital Forensic Investigator",
-  "QuickHeal Certified Malware Analyst",
+  { name: "CompTIA PenTest+", issuer: "CompTIA", date: "Apr 2026" },
+  { name: "CompTIA CySA+", issuer: "CompTIA", date: "Mar 2026" },
+  { name: "CompTIA Security+", issuer: "CompTIA", date: "Nov 2025" },
+  { name: "Certified Digital Forensic Investigator (CDFI)", issuer: "Quick Heal", date: "Jan 2025" },
+  { name: "CompTIA Network+", issuer: "CompTIA", date: "Jul 2024" },
 ];
 
 const training = {
@@ -24,14 +23,16 @@ const CertificationsSection = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {certs.map((cert) => (
-          <motion.div key={cert} variants={fadeUp} className="surface-card surface-card-hover border border-border rounded-xl p-5 flex flex-col items-center text-center">
+          <motion.div key={cert.name} variants={fadeUp} className="surface-card surface-card-hover border border-border rounded-xl p-5 flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-4">
               <Award className="h-6 w-6 text-primary" strokeWidth={1.5} />
             </div>
-            <h3 className="text-sm font-medium text-foreground mb-3">{cert}</h3>
-            <a href="#" className="inline-flex items-center gap-1 text-accent text-xs hover:underline mt-auto">
-              Verify <ExternalLink className="h-3 w-3" />
-            </a>
+            <h3 className="text-sm font-medium text-foreground mb-3">{cert.name}</h3>
+            <div className="mt-auto flex items-center gap-2 font-mono-data text-muted-foreground">
+              <span>{cert.issuer}</span>
+              <span className="opacity-40">·</span>
+              <span>{cert.date}</span>
+            </div>
           </motion.div>
         ))}
       </div>

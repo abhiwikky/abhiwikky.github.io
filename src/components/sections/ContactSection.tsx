@@ -6,12 +6,21 @@ import { stagger, fadeUp } from "@/lib/animations";
 const contactLinks = [
   { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/abhiwikky/", display: "abhiwikky" },
   { icon: Github, label: "GitHub", href: "https://github.com/abhiwikky/", display: "abhiwikky" },
-  { icon: Mail, label: "Email", href: "mailto:connect.abhijiths@gmail.com", display: "connect.abhijiths@gmail.com" },
-  { icon: Phone, label: "Phone", href: "tel:+91974532205", display: "+91-974532205" },
+  { icon: Mail, label: "Email", href: "mailto:abhijiths01022@gmail.com", display: "abhijiths01022@gmail.com" },
+  { icon: Phone, label: "Phone", href: "tel:+919745322050", display: "+91-9745322050" },
 ];
 
 const ContactSection = () => {
   const [activeTab, setActiveTab] = useState<"links" | "direct">("links");
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+
+  // No backend: opens the visitor's mail client with the message pre-filled.
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const subject = `Portfolio enquiry from ${form.name || "a visitor"}`;
+    const body = `${form.message}\n\n— ${form.name}${form.email ? ` (${form.email})` : ""}`;
+    window.location.href = `mailto:abhijiths01022@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
 
   return (
     <motion.div variants={stagger} initial="hidden" animate="show">
@@ -51,23 +60,24 @@ const ContactSection = () => {
             </div>
           ) : (
             <div className="surface-card border border-border rounded-xl p-6">
-              <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-5" onSubmit={handleSubmit}>
                 <div>
                   <label className="label-caps text-[10px] block mb-2">Name</label>
-                  <input type="text" className="w-full bg-transparent border-b border-border pb-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" placeholder="Your name" />
+                  <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-transparent border-b border-border pb-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" placeholder="Your name" />
                 </div>
                 <div>
                   <label className="label-caps text-[10px] block mb-2">Email</label>
-                  <input type="email" className="w-full bg-transparent border-b border-border pb-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" placeholder="your@email.com" />
+                  <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full bg-transparent border-b border-border pb-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" placeholder="your@email.com" />
                 </div>
                 <div>
                   <label className="label-caps text-[10px] block mb-2">Message</label>
-                  <textarea rows={4} className="w-full bg-transparent border-b border-border pb-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors resize-none" placeholder="Your message..." />
+                  <textarea rows={4} required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full bg-transparent border-b border-border pb-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors resize-none" placeholder="Your message..." />
                 </div>
                 <button type="submit" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity">
                   <Send className="h-4 w-4" />
-                  <span className="font-mono-data uppercase tracking-wider">Send Message</span>
+                  <span className="font-mono-data uppercase tracking-wider">Compose Email</span>
                 </button>
+                <p className="text-[11px] text-muted-foreground">Opens your email app with the message pre-filled.</p>
               </form>
             </div>
           )}

@@ -3,12 +3,12 @@ import { useState, useMemo } from "react";
 import { stagger, fadeUp } from "@/lib/animations";
 
 const skillCategories: Record<string, string[]> = {
-  Languages: ["Python", "Bash", "C++", "Rust"],
-  "Operating Systems": ["Linux", "Windows"],
-  "Security Tools": ["Nmap", "Nessus", "Burp Suite", "Wireshark", "Metasploit", "Hydra", "FTK Imager", "Autopsy", "Splunk"],
-  "Platforms & Tech": ["Git", "Docker", "AWS"],
-  "Frameworks & Knowledge": ["MITRE ATT&CK", "OWASP Top 10", "OSINT"],
-  "Soft Skills": ["Problem Solving", "Adaptability", "Communication", "Team Management", "Leadership"],
+  Cybersecurity: ["Vulnerability Assessment", "Network Security", "Penetration Testing", "Security Auditing", "IAM", "Risk Assessment", "MITRE ATT&CK"],
+  Tools: ["Splunk (SIEM)", "Wireshark", "Nmap", "Nessus", "Burp Suite", "Wazuh", "Nikto", "Metasploit", "Hydra", "Aircrack-ng Suite", "SQLmap", "ffuf", "Volatility 3", "FTK Imager", "Autopsy", "Git", "Docker", "VMware", "VirtualBox", "Cisco Packet Tracer"],
+  Networking: ["TCP/IP", "OSI Model", "Subnetting", "DNS", "DHCP", "NAT", "VLAN", "Routing & Switching", "VPN Fundamentals", "Network Troubleshooting"],
+  Development: ["Python", "Rust", "C++", "Bash", "Scripting & Automation", "Security Tooling", "Kernel-Level Drivers"],
+  "Cloud & Infra": ["AWS CloudTrail", "AWS CloudWatch", "AWS SNS", "AWS S3", "AWS IAM", "Compliance Fundamentals (NIST)", "Docker", "Git / GitHub"],
+  "Operating Systems": ["Linux (advanced: administration, scripting, package management)", "Windows (advanced: registry, WMI, ETW, NT APIs)"],
 };
 
 const categories = Object.keys(skillCategories);
@@ -26,7 +26,7 @@ const SkillsSection = () => {
       <motion.div variants={fadeUp} className="label-caps mb-4">// SKILLS</motion.div>
       <motion.h2 variants={fadeUp} className="section-header mb-8">SKILLS_</motion.h2>
 
-      <motion.div variants={fadeUp} className="relative flex gap-8 min-h-[500px]">
+      <motion.div variants={fadeUp} className="relative flex gap-8 min-h-[420px]">
         <div className="w-48 shrink-0 space-y-2">
           {categories.map((cat) => (
             <button
@@ -52,7 +52,7 @@ const SkillsSection = () => {
                   key={`${activeCategory}-${idx}`}
                   d={`M 0 ${catY(activeCatIdx)} C 48 ${catY(activeCatIdx)}, 48 ${skillY(idx)}, 96 ${skillY(idx)}`}
                   fill="none"
-                  stroke="hsl(210, 100%, 50%)"
+                  stroke="hsl(172, 78%, 45%)"
                   strokeWidth="1.5"
                   strokeOpacity="0.4"
                   initial={{ pathLength: 0, opacity: 0 }}

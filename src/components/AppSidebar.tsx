@@ -1,8 +1,9 @@
-import { User, FolderGit2, Cpu, Award, Trophy, GraduationCap, Mail } from "lucide-react";
+import { User, Briefcase, FolderGit2, Cpu, Award, Trophy, GraduationCap, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { id: "about", label: "ABOUT", icon: User },
+  { id: "experience", label: "EXPERIENCE", icon: Briefcase },
   { id: "projects", label: "PROJECTS", icon: FolderGit2 },
   { id: "skills", label: "SKILLS", icon: Cpu },
   { id: "certifications", label: "CERTS", icon: Award },
@@ -31,7 +32,7 @@ const AppSidebar = ({ activeSection, onNavigate, collapsed = false }: AppSidebar
           {collapsed ? "AS" : "ABHIJITH_S"}
         </div>
         {!collapsed && (
-          <div className="label-caps mt-1 text-[10px]">SECURITY_RESEARCHER</div>
+          <div className="label-caps mt-1 text-[10px]">IR // DFIR // DETECTION</div>
         )}
       </div>
 
@@ -70,7 +71,7 @@ const AppSidebar = ({ activeSection, onNavigate, collapsed = false }: AppSidebar
       {/* Footer */}
       {!collapsed && (
         <div className="p-4 border-t border-border">
-          <div className="label-caps text-[9px]">© 2025 ABHIJITH S</div>
+          <div className="label-caps text-[9px]">© 2026 ABHIJITH S</div>
         </div>
       )}
     </aside>

@@ -3,9 +3,9 @@ import { GraduationCap } from "lucide-react";
 import { stagger, fadeUp } from "@/lib/animations";
 
 const education = [
-  { institution: "Lovely Professional University", location: "Jalandhar, Punjab", degree: "B.Tech — CSE (Honours)", detail: "CGPA: 7.38", period: "Aug 2022 – Present" },
-  { institution: "Sree Narayana Central School", location: "Mavelikkara, Kerala", degree: "12th Grade — Science", detail: "98%", period: "" },
-  { institution: "Sree Narayana Central School", location: "Mavelikkara, Kerala", degree: "10th Grade — Science", detail: "91.4%", period: "" },
+  { institution: "Lovely Professional University", location: "Jalandhar, Punjab", degree: "B.Tech — CSE (Hons.)", detail: "CGPA 7.57 · Specialisation: Cybersecurity and Blockchain", period: "Aug 2022 – Jun 2026" },
+  { institution: "Sree Narayana Central School", location: "Mavelikkara, Kerala (CBSE)", degree: "12th Grade — Science", detail: "91.4%", period: "" },
+  { institution: "Sree Narayana Central School", location: "Mavelikkara, Kerala (CBSE)", degree: "Matriculation (10th)", detail: "98%", period: "" },
 ];
 
 const EducationSection = () => {
@@ -29,7 +29,7 @@ const EducationSection = () => {
                   </div>
                   {edu.period && <span className="font-mono-data text-muted-foreground shrink-0">{edu.period}</span>}
                 </div>
-                <div className="mt-3 flex items-center gap-3">
+                <div className="mt-3 flex items-center gap-3 flex-wrap">
                   <span className="tech-pill text-[11px]">{edu.degree}</span>
                   <span className="text-sm text-accent">{edu.detail}</span>
                 </div>

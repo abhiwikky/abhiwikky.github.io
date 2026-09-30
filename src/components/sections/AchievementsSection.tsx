@@ -3,9 +3,10 @@ import { Zap } from "lucide-react";
 import { stagger, fadeUp } from "@/lib/animations";
 
 const achievements = [
-  { title: "CRACCON 2025", description: "Participated in workshops, technical labs, and CXO panels related to cybersecurity.", year: "2025" },
-  { title: "DSCI AISS 2024", description: "Gained exposure to industry cybersecurity practices and emerging threat landscapes.", year: "2024" },
-  { title: "Startup Seed Funding", description: "Secured INR 1,00,000 seed funding for early-stage startup development.", year: "2024" },
+  { title: "Trivarna CTF", description: "Placed 46th out of 377 teams with a team score of 9200.", year: "CTF" },
+  { title: "CRACCON 2025", description: "Attended CXO panels, threat intelligence workshops, and offensive security tech labs.", year: "Oct 2025" },
+  { title: "DSCI AISS 2024", description: "Gained exposure to enterprise security governance, policy frameworks, and industry IR practices.", year: "Dec 2024" },
+  { title: "Startup Seed Funding", description: "Secured ₹1,00,000 seed funding for early-stage startup development.", year: "May 2024" },
 ];
 
 const AchievementsSection = () => {

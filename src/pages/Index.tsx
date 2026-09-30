@@ -5,6 +5,7 @@ import AppSidebar from "@/components/AppSidebar";
 import CursorTrail from "@/components/CursorTrail";
 import GridBackground from "@/components/GridBackground";
 import AboutSection from "@/components/sections/AboutSection";
+import ExperienceSection from "@/components/sections/ExperienceSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import SkillsSection from "@/components/sections/SkillsSection";
 import CertificationsSection from "@/components/sections/CertificationsSection";
@@ -14,6 +15,7 @@ import ContactSection from "@/components/sections/ContactSection";
 
 const sectionList = [
   { id: "about", Component: AboutSection },
+  { id: "experience", Component: ExperienceSection },
   { id: "projects", Component: ProjectsSection },
   { id: "skills", Component: SkillsSection },
   { id: "certifications", Component: CertificationsSection },
