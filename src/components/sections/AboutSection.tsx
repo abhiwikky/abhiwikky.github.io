@@ -75,15 +75,6 @@ const AboutSection = () => {
         </p>
       </motion.div>
 
-      <motion.div variants={fadeUp} className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3">
-        {stats.map((s) => (
-          <div key={s.label} className="surface-card border border-border rounded-xl p-4">
-            <div className="font-mono-display text-2xl md:text-3xl font-bold text-primary">{s.value}</div>
-            <div className="mt-1 text-xs text-muted-foreground leading-snug">{s.label}</div>
-          </div>
-        ))}
-      </motion.div>
-
       <motion.div variants={fadeUp} className="mt-10">
         <div className="label-caps mb-4">// WHAT I DO</div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
