@@ -45,6 +45,9 @@ const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isTransitioning = useRef(false);
   const touchStartY = useRef(0);
+  const touchStartAtEdge = useRef<{ top: boolean; bottom: boolean }>({ top: true, bottom: true });
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastInnerScroll = useRef(0);
 
   const activeSection = sectionList[currentIndex].id;
   const ActiveComponent = sectionList[currentIndex].Component;
@@ -64,31 +67,69 @@ const Index = () => {
   }, [goTo]);
 
   useEffect(() => {
+    // The active section is an overflow-y-auto container. Scroll it first,
+    // and only move to another section once its top/bottom edge is reached.
+    const edges = () => {
+      const el = scrollRef.current;
+      if (!el) return { top: true, bottom: true, scrollable: false };
+      return {
+        top: el.scrollTop <= 0,
+        bottom: el.scrollTop + el.clientHeight >= el.scrollHeight - 1,
+        scrollable: el.scrollHeight > el.clientHeight + 1,
+      };
+    };
+
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       if (isTransitioning.current) return;
+      if (Math.abs(e.deltaY) < 1) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      const el = scrollRef.current;
+      const { top, bottom, scrollable } = edges();
+
+      if (el && scrollable && (dir > 0 ? !bottom : !top)) {
+        el.scrollTop += e.deltaY;
+        lastInnerScroll.current = Date.now();
+        return;
+      }
+      // Ignore trackpad momentum that just carried us to the edge.
+      if (scrollable && Date.now() - lastInnerScroll.current < 300) return;
       if (Math.abs(e.deltaY) < 30) return;
-      goTo(currentIndex + (e.deltaY > 0 ? 1 : -1));
+      goTo(currentIndex + dir);
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown" || e.key === "PageDown") {
-        e.preventDefault();
-        goTo(currentIndex + 1);
-      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-        e.preventDefault();
-        goTo(currentIndex - 1);
+      const down = e.key === "ArrowDown" || e.key === "PageDown";
+      const up = e.key === "ArrowUp" || e.key === "PageUp";
+      if (!down && !up) return;
+      e.preventDefault();
+      const dir = down ? 1 : -1;
+      const el = scrollRef.current;
+      const { top, bottom, scrollable } = edges();
+
+      if (el && scrollable && (dir > 0 ? !bottom : !top)) {
+        const step = e.key.startsWith("Page") ? el.clientHeight * 0.9 : 80;
+        el.scrollBy({ top: dir * step, behavior: "smooth" });
+        lastInnerScroll.current = Date.now();
+        return;
       }
+      goTo(currentIndex + dir);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY.current = e.touches[0].clientY;
+      const { top, bottom } = edges();
+      touchStartAtEdge.current = { top, bottom };
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
       const delta = touchStartY.current - e.changedTouches[0].clientY;
       if (Math.abs(delta) < 50) return;
-      goTo(currentIndex + (delta > 0 ? 1 : -1));
+      const dir = delta > 0 ? 1 : -1;
+      const { top, bottom } = touchStartAtEdge.current;
+      // Only change section if the swipe began at the edge in that direction.
+      if (dir > 0 ? !bottom : !top) return;
+      goTo(currentIndex + dir);
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
@@ -151,6 +192,7 @@ const Index = () => {
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={activeSection}
+            ref={scrollRef}
             custom={direction}
             variants={variants}
             initial="enter"
